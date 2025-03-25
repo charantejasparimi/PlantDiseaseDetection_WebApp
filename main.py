@@ -119,6 +119,7 @@ def get_disease_information_by_name(disease_name):
 
 @app.get('/', response_class=HTMLResponse)
 def web():
+    print("hi")
     with open("main.html", "r") as file:
         html_content = file.read()
     return HTMLResponse(content=html_content)
@@ -232,4 +233,5 @@ async def submit(
     
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=80)
+    port = int(os.environ.get("PORT", 8000))  # Get the port from the environment
+    uvicorn.run(app, host="0.0.0.0", port=port)
