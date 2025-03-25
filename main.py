@@ -79,17 +79,39 @@ def clean_keys(dictionary):
         cleaned_dict[cleaned_key] = value
     return cleaned_dict
 
+# def get_disease_information_by_name(disease_name):
+#     try:
+#         query = db.collection('com')
+#         docs = query.stream()
+#         matching_documents = []
+#         print("teja"+disease_name)
+#         print("docs",docs)
+
+#         for doc in docs:
+#             doc_data = doc.to_dict()
+#             if disease_name in doc_data:
+#                 cleaned_data = clean_keys(doc_data)
+#                 return cleaned_data
+#     except Exception as e:
+#         print("some thing error occured")
+#         print("Firestore error:", e)
+#         return None
+
+
 def get_disease_information_by_name(disease_name):
     try:
         query = db.collection('com')
         docs = query.stream()
-        matching_documents = []
-        print(disease_name)
+
         for doc in docs:
             doc_data = doc.to_dict()
             if disease_name in doc_data:
                 cleaned_data = clean_keys(doc_data)
                 return cleaned_data
+        
+        print(f"Disease '{disease_name}' not found in Firestore")
+        return None  # Return None if no match is found
+
     except Exception as e:
         print("Firestore error:", e)
         return None
@@ -110,9 +132,10 @@ async def predict(request: Request, file: UploadFile):
         image.save('static/uploads/uploaded_image.png')
         prediction = predict_image(image) 
         print("prediction",prediction)
+        print("hi charna")
         global disease 
         disease = prediction["class_label"]
-        if prediction["class_label"] == "I can't identify the image":
+        if prediction["class_label"] == "I can't identify the image": 
             # Return an alert message for unidentified images
             return templates.TemplateResponse("error_template.html", {"request": request, "message": "I can't identify the image. Please try another one."})
         # print("predicted class label",disease)
